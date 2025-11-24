@@ -1,8 +1,8 @@
 {
   "report_dismiss": {
-    "subtitle": "sound.modutils.report_dismiss",
+    "subtitle": "sound.modutilities.report_dismiss",
     "sounds": [
-      "modutils:report_dismiss"
+      "modutilities:report_dismiss"
     ]
   }
 }

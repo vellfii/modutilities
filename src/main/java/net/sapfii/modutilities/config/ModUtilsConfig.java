@@ -3,23 +3,27 @@ package net.sapfii.modutilities.config;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.fabricmc.loader.api.FabricLoader;
+import net.sapfii.modutilities.config.enums.LogDirection;
+import net.sapfii.modutilities.config.enums.ReportType;
+import org.apache.commons.logging.Log;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ModUtilsConfig {
-    public boolean useVanishDisplay = true;
-    public boolean useReportDisplay = true;
-    public boolean useHistoryScreen = true;
-    public boolean useLogScreen = true;
-    public enum LOG_DIRECTION {UP, DOWN}
-    public LOG_DIRECTION logDirection = LOG_DIRECTION.UP;
-    public enum REPORT_TYPE {CLASSIC, REVAMPED, REIMAGINED}
-    public REPORT_TYPE reportType = REPORT_TYPE.REVAMPED;
-    public boolean hideJoinMessages = true;
+    public ConfigOption<Boolean> useVanishDisplay = ConfigOption.build(true);
+    public ConfigOption<Boolean> useReportDisplay = ConfigOption.build(true);
+    public ConfigOption<Boolean> useHistoryScreen = ConfigOption.build(true);
+    public ConfigOption<Boolean> useLogScreen = ConfigOption.build(true);
+    public ConfigOption<Boolean> hideJoinMessages = ConfigOption.build(true);
+    public ConfigOption<LogDirection> logDirection = ConfigOption.build(LogDirection.UP);
+    public ConfigOption<ReportType> reportType = ConfigOption.build(ReportType.REVAMPED);
+
 
     private static final Path CONFIG_PATH = FabricLoader.getInstance()
             .getConfigDir()
