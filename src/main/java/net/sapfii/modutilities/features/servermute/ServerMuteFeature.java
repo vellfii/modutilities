@@ -16,6 +16,7 @@ public class ServerMuteFeature extends Feature implements PacketListeningFeature
     private static final Pattern GENERIC = Pattern.compile("\\[Server: (?<msg>.+)]");
     private static final String VIAVERS = "\\[ViaVersion] There is a newer plugin version available:";
     private static final String FAWE = "(FAWE) A new release for FastAsyncWorldEdit";
+    private static final String FAWE2 = "(FAWE) An update for FastAsyncWorldEdit is available.";
 
 
     @Override
@@ -25,7 +26,12 @@ public class ServerMuteFeature extends Feature implements PacketListeningFeature
         Matcher failedJoin = FAILEDJOIN.matcher(str);
         Matcher failedSpeech = FAILEDSPEECH.matcher(str);
         Matcher generic = GENERIC.matcher(str);
-        boolean cancel = failedJoin.find() || failedSpeech.find() || generic.find() || str.startsWith(VIAVERS) || str.startsWith(FAWE);
+        boolean cancel = failedJoin.find() ||
+                failedSpeech.find() ||
+                generic.find() ||
+                str.startsWith(VIAVERS) ||
+                str.startsWith(FAWE) ||
+                str.startsWith(FAWE2);
         return cancel ? PacketResult.CANCEL : PacketResult.PASS;
     }
 }
