@@ -6,17 +6,17 @@ import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
 import net.sapfii.modutilities.commands.ModUtilsCommands;
+import net.sapfii.modutilities.config.ConfigOption;
 import net.sapfii.modutilities.config.ModUtilsConfig;
-import net.sapfii.modutilities.features.log.LogHandler;
-import net.sapfii.modutilities.features.playertracker.PlayerTracker;
-import net.sapfii.modutilities.features.repeattp.RepeatLastTP;
-import net.sapfii.modutilities.features.report.ReportHandler;
-import net.sapfii.modutilities.features.servermute.ServerMessageMuter;
-import net.sapfii.modutilities.features.setrank.SetRankAutocomplete;
-import net.sapfii.modutilities.features.vanish.VanishTracker;
+import net.sapfii.modutilities.features.Features;
+import net.sapfii.modutilities.features.logscreen.LogScreenFeature;
+import net.sapfii.modutilities.features.reportoverlay.ReportOverlayFeature;
+import net.sapfii.modutilities.features.servermute.ServerMuteFeature;
+import net.sapfii.modutilities.features.setrankautocomplete.SetRankAutocompleteFeature;
+import net.sapfii.modutilities.features.tprepeat.TPRepeatFeature;
+import net.sapfii.modutilities.features.vanishoverlay.VanishOverlayFeature;
 import net.sapfii.modutilities.keybinds.ModUtilsKeyBinds;
 import net.sapfii.modutilities.sounds.ModUtilsSounds;
-import net.sapfii.sapscreens.ScreenHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,17 +31,21 @@ public class ModUtilities implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         ModUtilsConfig.loadConfig();
-        VanishTracker.init();
-        ReportHandler.init();
         ModUtilsCommands.init();
-        LogHandler.init();
-        ServerMessageMuter.init();
-        RepeatLastTP.init();
-        SetRankAutocomplete.init();
-        PlayerTracker.init();
-
         ModUtilsSounds.init();
         ModUtilsKeyBinds.init();
+
+        Features.registerFeatures(
+                new ReportOverlayFeature(),
+                new VanishOverlayFeature(),
+                new ServerMuteFeature(),
+                new TPRepeatFeature(),
+                new SetRankAutocompleteFeature(),
+                new LogScreenFeature()
+        );
+
+        Features.init();
+
         LOGGER.info("ogfh... im modding it... modding it!");
     }
 

@@ -8,7 +8,6 @@
   ],
   "client": [
     "MClientPlayNetworkHandler",
-    "MEntityRenderer",
     "MToastManager"
   ],
   "injectors": {
