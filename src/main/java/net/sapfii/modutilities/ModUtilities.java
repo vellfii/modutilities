@@ -9,8 +9,10 @@ import net.sapfii.modutilities.commands.ModUtilsCommands;
 import net.sapfii.modutilities.config.ConfigOption;
 import net.sapfii.modutilities.config.ModUtilsConfig;
 import net.sapfii.modutilities.features.Features;
+import net.sapfii.modutilities.features.logscreen.LogScreenFeature;
 import net.sapfii.modutilities.features.reportoverlay.ReportOverlayFeature;
 import net.sapfii.modutilities.features.servermute.ServerMuteFeature;
+import net.sapfii.modutilities.features.setrankautocomplete.SetRankAutocompleteFeature;
 import net.sapfii.modutilities.features.tprepeat.TPRepeatFeature;
 import net.sapfii.modutilities.features.vanishoverlay.VanishOverlayFeature;
 import net.sapfii.modutilities.keybinds.ModUtilsKeyBinds;
@@ -37,7 +39,9 @@ public class ModUtilities implements ClientModInitializer {
                 new ReportOverlayFeature(),
                 new VanishOverlayFeature(),
                 new ServerMuteFeature(),
-                new TPRepeatFeature()
+                new TPRepeatFeature(),
+                new SetRankAutocompleteFeature(),
+                new LogScreenFeature()
         );
 
         Features.init();
