@@ -2,6 +2,8 @@ package net.sapfii.modutilities.features;
 
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Mouse;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.network.packet.Packet;
@@ -23,8 +25,9 @@ public class Features {
     }
 
     private static void render(DrawContext context, RenderTickCounter renderTickCounter) {
+        MinecraftClient MC = ModUtilities.MC;
         for (Feature feature : Features.registeredFeatures()) {
-            if (feature instanceof RenderedFeature rf) rf.render(context, -9999f, -9999f);
+            if (feature instanceof RenderedFeature rf) rf.render(context, (float) MC.mouse.getScaledX(MC.getWindow()), (float) MC.mouse.getScaledY(MC.getWindow()));
         }
     }
 

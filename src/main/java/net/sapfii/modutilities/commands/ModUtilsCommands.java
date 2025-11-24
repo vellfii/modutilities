@@ -18,6 +18,7 @@ public class ModUtilsCommands {
             ScreenHandler.openScreen(new ReportScreen());
             return 1;
         });
+        
     }
 
     private static void registerSimpleCommand(String id, Command<FabricClientCommandSource> command) {

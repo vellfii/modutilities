@@ -10,6 +10,7 @@ import net.sapfii.modutilities.config.ConfigOption;
 import net.sapfii.modutilities.config.ModUtilsConfig;
 import net.sapfii.modutilities.features.Features;
 import net.sapfii.modutilities.features.logscreen.LogScreenFeature;
+import net.sapfii.modutilities.features.playertracker.PlayerTrackerFeature;
 import net.sapfii.modutilities.features.reportoverlay.ReportOverlayFeature;
 import net.sapfii.modutilities.features.servermute.ServerMuteFeature;
 import net.sapfii.modutilities.features.setrankautocomplete.SetRankAutocompleteFeature;
@@ -41,7 +42,8 @@ public class ModUtilities implements ClientModInitializer {
                 new ServerMuteFeature(),
                 new TPRepeatFeature(),
                 new SetRankAutocompleteFeature(),
-                new LogScreenFeature()
+                new LogScreenFeature(),
+                new PlayerTrackerFeature()
         );
 
         Features.init();

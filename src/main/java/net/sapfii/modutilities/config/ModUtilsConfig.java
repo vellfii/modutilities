@@ -5,15 +5,12 @@ import com.google.gson.GsonBuilder;
 import net.fabricmc.loader.api.FabricLoader;
 import net.sapfii.modutilities.config.enums.LogDirection;
 import net.sapfii.modutilities.config.enums.ReportType;
-import org.apache.commons.logging.Log;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ModUtilsConfig {
     public ConfigOption<Boolean> useVanishDisplay = ConfigOption.build(true);
