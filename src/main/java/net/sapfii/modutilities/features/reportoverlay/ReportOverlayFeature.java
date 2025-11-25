@@ -1,9 +1,11 @@
 package net.sapfii.modutilities.features.reportoverlay;
 
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
+import net.minecraft.network.packet.s2c.play.GameStateChangeS2CPacket;
 import net.minecraft.text.Text;
 import net.sapfii.modutilities.ModUtilities;
 import net.sapfii.modutilities.config.ModUtilsConfig;
@@ -11,11 +13,13 @@ import net.sapfii.modutilities.features.Feature;
 import net.sapfii.modutilities.features.interfaces.KeyBindListeningFeature;
 import net.sapfii.modutilities.features.interfaces.PacketListeningFeature;
 import net.sapfii.modutilities.features.interfaces.RenderedFeature;
+import net.sapfii.modutilities.features.vanishoverlay.VanishMode;
 import net.sapfii.modutilities.keybinds.ModUtilsKeyBinds;
 import net.sapfii.modutilities.sounds.ModUtilsSounds;
+import net.velli.scelli.widget.interfaces.ClickableWidget;
 import net.velli.scelli.widget.widgets.Widget;
+import org.joml.Vector2f;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
@@ -36,11 +40,29 @@ public class ReportOverlayFeature extends Feature implements RenderedFeature, Pa
 
     public List<ReportData> reports = new CopyOnWriteArrayList<>();
 
+    private static String queuedTeleport = "";
+    private static String queuedNodeSwitch = "";
+
     @Override
     public PacketResult onPacket(Packet<?> packet) {
         if (!ModUtilsConfig.config.useReportDisplay.get()) return PacketResult.PASS;
+        if (packet instanceof GameStateChangeS2CPacket && !queuedTeleport.isEmpty() && queuedNodeSwitch.isEmpty()) {
+            ModUtilities.sendCommand(queuedTeleport);
+            queuedTeleport = "";
+        }
         if (!(packet instanceof GameMessageS2CPacket(Text msgText, boolean overlay))) return PacketResult.PASS;
         String string = msgText.getString();
+
+        if (string.matches("You are already connected to this server!") && !queuedTeleport.isEmpty()) {
+            ModUtilities.sendCommand(queuedTeleport);
+            queuedTeleport = "";
+            return PacketResult.CANCEL;
+        }
+
+        if (string.matches("» Vanish enabled. You will not be visible to other players.") && !queuedNodeSwitch.isEmpty()) {
+            ModUtilities.sendCommand(queuedNodeSwitch);
+            queuedNodeSwitch = "";
+        }
 
         Matcher matcher = REPORT_REGEX.matcher(string);
         if (matcher.find()) {
@@ -59,6 +81,16 @@ public class ReportOverlayFeature extends Feature implements RenderedFeature, Pa
         }
 
         return PacketResult.PASS;
+    }
+
+    @Override
+    public void onClick(float mouseX, float mouseY, boolean active) {
+        this.getWidgets().forEach((widget) -> {
+            if (widget instanceof ClickableWidget cw) {
+                Vector2f alignmentOffsets = widget.position().alignmentOffsets(this);
+                cw.onClick(mouseX - (float)widget.x() - alignmentOffsets.x, mouseY - (float)widget.y() - alignmentOffsets.y, true);
+            }
+        });
     }
 
     @Override
@@ -95,5 +127,18 @@ public class ReportOverlayFeature extends Feature implements RenderedFeature, Pa
             getWidgets().getFirst().withOpacity(0, false);
             ModUtilities.playSound(ModUtilsSounds.REPORT_DISMISS, 1f);
         }
+    }
+
+    public static void clickedReport(ReportData data) {
+        if (!(ModUtilities.MC.currentScreen instanceof ChatScreen || ModUtilities.MC.currentScreen instanceof ReportScreen)) return;
+        String serverCmd = "server " + data.location.toLowerCase().replace(" ", "");
+        if (serverCmd.contains("private")) serverCmd = serverCmd.replace("node", "");
+        if (VanishMode.is(VanishMode.NONE)) {
+            ModUtilities.sendCommand("mod v");
+            queuedNodeSwitch = serverCmd;
+        } else {
+            ModUtilities.sendCommand(serverCmd);
+        }
+        queuedTeleport = "tp " + data.offender;
     }
 }

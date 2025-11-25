@@ -1,8 +1,11 @@
 package net.sapfii.modutilities.features;
 
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.util.Identifier;
@@ -23,8 +26,20 @@ public class Features {
     }
 
     private static void render(DrawContext context, RenderTickCounter renderTickCounter) {
+        MinecraftClient MC = ModUtilities.MC;
+        float mouseX = MC.currentScreen instanceof ChatScreen ? (float) MC.mouse.getScaledX(MC.getWindow()) : 0;
+        float mouseY = MC.currentScreen instanceof ChatScreen ? (float) MC.mouse.getScaledY(MC.getWindow()) : 0;
         for (Feature feature : Features.registeredFeatures()) {
-            if (feature instanceof RenderedFeature rf) rf.render(context, -9999f, -9999f);
+            if (feature instanceof RenderedFeature rf) {
+                rf.render(context, mouseX, mouseY);
+                rf.hoverWidgets(mouseX, mouseY, true);
+            }
+        }
+    }
+
+    public static void onClick(float mouseX, float mouseY) {
+        for (Feature feature : Features.registeredFeatures()) {
+            if (feature instanceof RenderedFeature rf) rf.onClick(mouseX, mouseY, true);
         }
     }
 

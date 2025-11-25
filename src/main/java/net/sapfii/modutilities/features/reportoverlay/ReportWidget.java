@@ -5,17 +5,24 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.sapfii.modutilities.ModUtilities;
-import net.velli.scelli.widget.interfaces.WidgetContainer;
+import net.velli.scelli.widget.interfaces.ClickableWidget;
+import net.velli.scelli.widget.widgets.ButtonWidget;
 import net.velli.scelli.widget.widgets.TextWidget;
 import net.velli.scelli.widget.widgets.Widget;
+import net.velli.scelli.widget.widgets.containers.BasicContainer;
+import org.joml.Vector2f;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class ReportWidget extends Widget<ReportWidget> implements WidgetContainer<ReportWidget> {
+public class ReportWidget extends BasicContainer<ReportWidget> {
 
     protected ReportData data;
     protected final TextWidget textDisplay = TextWidget.create();
+    protected final ButtonWidget tpButton = ButtonWidget.create().withOpacity(0, true).withClickEvent(
+            (button, mouseX, mouseY, active) -> {
+                if (active) ReportOverlayFeature.clickedReport(data);
+            }
+    );
 
     public static ReportWidget create(ReportData data) {
         ReportWidget widget = new ReportWidget();
@@ -27,7 +34,7 @@ public class ReportWidget extends Widget<ReportWidget> implements WidgetContaine
 
     @Override
     public List<Widget<?>> getWidgets() {
-        return List.of(textDisplay);
+        return List.of(textDisplay, tpButton);
     }
 
     @Override
@@ -36,7 +43,28 @@ public class ReportWidget extends Widget<ReportWidget> implements WidgetContaine
         withDimensions(renderedWidth(), textDisplay.height() + 6, true);
         textDisplay.withPosition(3, 3, true);
         context.fill(0, 0, renderedWidth(), renderedHeight(), stackOpacity(0x66000000, opacity));
+        tpButton.withDimensions(renderedWidth(), renderedHeight(), true);
         renderWidgets(context, mouseX, mouseY, opacity);
+    }
+
+    @Override
+    public void onClick(float mouseX, float mouseY, boolean active) {
+        this.getWidgets().forEach((widget) -> {
+            if (widget instanceof ClickableWidget cw) {
+                boolean hovered = this.isHovered(mouseX, mouseY) && renderedOpacity() > 0;
+                Vector2f alignmentOffsets = widget.position().alignmentOffsets(this);
+                cw.onClick(mouseX - (float)widget.x() - alignmentOffsets.x, mouseY - (float)widget.y() - alignmentOffsets.y, hovered);
+            }
+        });
+    }
+
+    @Override
+    public void hoverWidgets(float mouseX, float mouseY, boolean active) {
+        this.getWidgets().forEach((widget) -> {
+            boolean hovered = this.isHovered(mouseX, mouseY) && renderedOpacity() > 0;
+            Vector2f alignmentOffsets = widget.position().alignmentOffsets(this);
+            widget.hover(mouseX - (float)widget.renderedX() - alignmentOffsets.x, mouseY - (float)widget.renderedY() - alignmentOffsets.y, hovered);
+        });
     }
 
     @Override
