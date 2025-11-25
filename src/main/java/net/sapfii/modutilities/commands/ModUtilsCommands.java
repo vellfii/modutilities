@@ -1,10 +1,12 @@
 package net.sapfii.modutilities.commands;
 
 import com.mojang.brigadier.Command;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.sapfii.modutilities.config.ConfigScreen;
+import net.sapfii.modutilities.features.playertracker.PlayerTrackerFeature;
 import net.sapfii.modutilities.features.reportoverlay.ReportScreen;
 import net.velli.scelli.ScreenHandler;
 
@@ -18,7 +20,14 @@ public class ModUtilsCommands {
             ScreenHandler.openScreen(new ReportScreen());
             return 1;
         });
-        
+        ClientCommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess) -> {
+            dispatcher.register(ClientCommandManager.literal("track")
+                    .then(ClientCommandManager.argument("player", StringArgumentType.string())
+                            .executes(context -> {
+                        PlayerTrackerFeature.startTracking(context.getInput().split(" ")[1]);
+                        return 1;
+                    })));
+        }));
     }
 
     private static void registerSimpleCommand(String id, Command<FabricClientCommandSource> command) {
